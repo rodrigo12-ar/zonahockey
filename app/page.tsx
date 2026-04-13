@@ -3,7 +3,6 @@ import { ProductGrid } from "@/components/product-grid";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getAllProducts, getCategories, getFeaturedProducts } from "@/lib/shop";
-import { formatCurrency } from "@/lib/utils";
 
 export default function HomePage() {
   const categories = getCategories();
@@ -30,7 +29,7 @@ export default function HomePage() {
                 <Link href="#destacados" className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-accentDark">
                   Ver productos destacados
                 </Link>
-                <Link href="/#patines" className="rounded-full border border-white/10 px-6 py-3 text-sm transition hover:border-accent hover:text-accent">
+                <Link href="/categories/patines" className="rounded-full border border-white/10 px-6 py-3 text-sm transition hover:border-accent hover:text-accent">
                   Seguir comprando
                 </Link>
               </div>
@@ -71,7 +70,7 @@ export default function HomePage() {
             {categories.map((category) => (
               <Link
                 key={category.id}
-                href={`/#${category.slug}`}
+                href={`/categories/${category.slug}`}
                 className="card-surface rounded-3xl border border-white/10 p-6 transition hover:border-accent/40 hover:bg-slate-900/95"
               >
                 <p className="text-sm uppercase tracking-[0.24em] text-accent/90">{category.name}</p>

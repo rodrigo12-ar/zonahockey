@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Category } from "@/types";
+import { useCart } from "@/components/cart/cart-provider";
 
 type SiteHeaderProps = {
   categories: Category[];
@@ -10,6 +11,7 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ categories }: SiteHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { totalItems: cartTotalItems } = useCart();
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-background/95 backdrop-blur-xl">
@@ -33,10 +35,10 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
 
         {/* Desktop Categories */}
         <nav className="hidden items-center gap-2 text-xs text-slate-300 md:flex">
-          {categories.slice(0, 3).map((category) => (
+          {categories.map((category) => (
             <Link
               key={category.id}
-              href={`/#${category.slug}`}
+              href={`/categories/${category.slug}`}
               className="rounded-full px-3 py-2 transition hover:bg-white/5 hover:text-white"
             >
               {category.name}
@@ -47,9 +49,20 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
         {/* Cart Button */}
         <Link
           href="/cart"
-          className="rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-accentDark active:scale-95"
+          className="relative rounded-full bg-accent px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-accentDark active:scale-95"
         >
           🛒 Carrito
+          {cartTotalItems > 0 ? (
+            <span className="absolute -right-2 -top-2 flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white">
+              {cartTotalItems}
+            </span>
+          ) : null}
+        </Link>
+        <Link
+          href="/login"
+          className="hidden rounded-full border border-white/10 px-4 py-2.5 text-sm text-slate-200 transition hover:bg-white/10 md:inline-flex"
+        >
+          Admin
         </Link>
 
         {/* Mobile Menu Toggle */}
@@ -68,7 +81,7 @@ export function SiteHeader({ categories }: SiteHeaderProps) {
             {categories.map((category) => (
               <Link
                 key={category.id}
-                href={`/#${category.slug}`}
+                href={`/categories/${category.slug}`}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block rounded-2xl px-4 py-2 text-sm text-slate-300 transition hover:bg-white/5 hover:text-white"
               >

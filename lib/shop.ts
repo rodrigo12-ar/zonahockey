@@ -10,6 +10,10 @@ export function getCategories(): Category[] {
   return categories;
 }
 
+export function getCategoryBySlug(slug: string) {
+  return categories.find((category) => category.slug === slug);
+}
+
 export function getFeaturedProducts() {
   return [...productStore, ...photoStore].filter((item) => item.featured);
 }

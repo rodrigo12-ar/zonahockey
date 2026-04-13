@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductBySlug, getRelatedProducts } from "@/lib/shop";
 import { formatCurrency } from "@/lib/utils";
+import { AddToCartButton } from "@/components/cart/add-to-cart";
 import type { PhotoProduct, ProductBase } from "@/types";
 
 type PageProps = {
@@ -55,9 +56,14 @@ export default function ProductDetailPage({ params }: PageProps) {
               <span className="text-sm uppercase tracking-[0.28em] text-accent/90">Precio</span>
               <p className="mt-3 text-4xl font-semibold text-white">{formatCurrency(product.price)}</p>
               <p className="mt-4 text-sm leading-6 text-slate-300">El pago está preparado para Mercado Pago o transferencia bancaria.</p>
-              <button className="mt-6 w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-accentDark">
-                Agregar al carrito
-              </button>
+              <AddToCartButton
+                productId={product.id}
+                slug={product.slug}
+                name={product.name}
+                image={imageSrc}
+                price={product.price}
+                category={product.category}
+              />
             </div>
             <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6">
               <h2 className="text-lg font-semibold text-white">Detalles</h2>

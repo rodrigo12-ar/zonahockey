@@ -19,7 +19,12 @@ export default function AdminDashboardPage() {
                 <p className="text-sm uppercase tracking-[0.28em] text-accent/80">Dashboard</p>
                 <h1 className="mt-3 text-3xl font-semibold text-white">Panel de administración</h1>
               </div>
-              <div className="rounded-full bg-white/5 px-4 py-2 text-sm text-slate-300">Login admin preparado en ruta futura</div>
+              <Link
+                href="/api/logout"
+                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:border-rose-500/40 hover:text-rose-200"
+              >
+                Cerrar sesión
+              </Link>
             </div>
             <div className="mt-8 grid gap-6 sm:grid-cols-3">
               <div className="rounded-3xl border border-white/10 bg-slate-900/75 p-6">
