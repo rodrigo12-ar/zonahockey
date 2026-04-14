@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { Product } from "@/types";
+import type { Product, SkateSubcategory } from "@/types";
+
+const skateSubcategoryOptions: Array<{ value: SkateSubcategory; label: string }> = [
+  { value: "plancha", label: "Plancha" },
+  { value: "botas", label: "Botas" },
+  { value: "patin-completo", label: "Patin completo" },
+  { value: "accesorios", label: "Accesorios" }
+];
 
 type ProductFormProps = {
   initialData?: Partial<Product>;
@@ -14,6 +21,10 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
     name: initialData.name ?? "",
     slug: initialData.slug ?? "",
     category: initialData.category ?? "palos",
+    subcategory:
+      initialData.category === "patines"
+        ? initialData.subcategory ?? "patin-completo"
+        : "patin-completo",
     price: initialData.price?.toString() ?? "",
     shortDescription: initialData.shortDescription ?? "",
     longDescription: initialData.longDescription ?? "",
@@ -25,13 +36,15 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
+  const isSkateCategory = form.category === "patines";
+
   const handleChange = (field: string, value: string | boolean) => {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     if (!form.name.trim() || !form.price || !form.slug.trim()) {
       setStatus("error");
       setMessage("Por favor completa los campos requeridos: Nombre, Precio y Slug");
@@ -44,6 +57,7 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
     try {
       const payload = {
         ...form,
+        subcategory: isSkateCategory ? (form.subcategory as SkateSubcategory) : undefined,
         price: Number(form.price),
         stock: Number(form.stock),
         featured: form.featured,
@@ -58,12 +72,13 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
 
       if (response.ok) {
         setStatus("success");
-        setMessage(`Producto ${action === "create" ? "creado" : "actualizado"} con éxito.`);
+        setMessage(`Producto ${action === "create" ? "creado" : "actualizado"} con exito.`);
         if (action === "create") {
           setForm({
             name: "",
             slug: "",
             category: "palos",
+            subcategory: "patin-completo",
             price: "",
             shortDescription: "",
             longDescription: "",
@@ -79,7 +94,7 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
       }
     } catch (error) {
       setStatus("error");
-      setMessage("Error de conexión: " + (error instanceof Error ? error.message : "desconocido"));
+      setMessage("Error de conexion: " + (error instanceof Error ? error.message : "desconocido"));
     }
   };
 
@@ -105,12 +120,20 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
           />
         </label>
       </div>
+
       <div className="grid gap-6 sm:grid-cols-2">
         <label className="space-y-2 text-sm text-slate-300">
-          Categoría
+          Categoria
           <select
             value={form.category}
-            onChange={(event) => handleChange("category", event.target.value)}
+            onChange={(event) => {
+              const category = event.target.value as Product["category"];
+              setForm((current) => ({
+                ...current,
+                category,
+                subcategory: category === "patines" ? current.subcategory : "patin-completo"
+              }));
+            }}
             className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
           >
             <option value="palos">Palos</option>
@@ -119,19 +142,53 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
             <option value="accesorios">Accesorios</option>
           </select>
         </label>
-        <label className="space-y-2 text-sm text-slate-300">
-          Precio <span className="text-danger">*</span>
-          <input
-            required
-            type="number"
-            step="100"
-            min="0"
-            value={form.price}
-            onChange={(event) => handleChange("price", event.target.value)}
-            className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
-          />
-        </label>
+
+        {isSkateCategory ? (
+          <label className="space-y-2 text-sm text-slate-300">
+            Subseccion de patines
+            <select
+              value={form.subcategory}
+              onChange={(event) => handleChange("subcategory", event.target.value)}
+              className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+            >
+              {skateSubcategoryOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <label className="space-y-2 text-sm text-slate-300">
+            Precio <span className="text-danger">*</span>
+            <input
+              required
+              type="number"
+              step="100"
+              min="0"
+              value={form.price}
+              onChange={(event) => handleChange("price", event.target.value)}
+              className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+            />
+          </label>
+        )}
+
+        {isSkateCategory ? (
+          <label className="space-y-2 text-sm text-slate-300">
+            Precio <span className="text-danger">*</span>
+            <input
+              required
+              type="number"
+              step="100"
+              min="0"
+              value={form.price}
+              onChange={(event) => handleChange("price", event.target.value)}
+              className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
+            />
+          </label>
+        ) : null}
       </div>
+
       <div className="grid gap-6 sm:grid-cols-2">
         <label className="space-y-2 text-sm text-slate-300">
           Stock
@@ -154,33 +211,33 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
           />
         </label>
       </div>
+
       <div className="space-y-2 text-sm text-slate-300">
         <label className="space-y-2 text-sm text-slate-300">
-          Texto de promoción
+          Texto de promocion
           <input
             type="text"
             value={form.promotionText}
             onChange={(event) => handleChange("promotionText", event.target.value)}
-            placeholder="Oferta, Promo de la semana, Últimas unidades"
+            placeholder="Oferta, Promo de la semana, Ultimas unidades"
             className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
         </label>
       </div>
+
       <div className="space-y-4">
         <label className="space-y-2 text-sm text-slate-300">
-          Descripción corta
+          Descripcion corta
           <input
             value={form.shortDescription}
             onChange={(event) => handleChange("shortDescription", event.target.value)}
             maxLength={120}
             className="w-full rounded-2xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
-          <span className="text-xs text-slate-400">
-            {form.shortDescription.length}/120
-          </span>
+          <span className="text-xs text-slate-400">{form.shortDescription.length}/120</span>
         </label>
         <label className="space-y-2 text-sm text-slate-300">
-          Descripción larga
+          Descripcion larga
           <textarea
             value={form.longDescription}
             onChange={(event) => handleChange("longDescription", event.target.value)}
@@ -188,11 +245,10 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
             maxLength={500}
             className="w-full rounded-3xl border border-slate-700 bg-slate-900/95 px-4 py-3 text-slate-100 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20"
           />
-          <span className="text-xs text-slate-400">
-            {form.longDescription.length}/500
-          </span>
+          <span className="text-xs text-slate-400">{form.longDescription.length}/500</span>
         </label>
       </div>
+
       <div className="flex items-center justify-between gap-4 rounded-2xl bg-white/5 p-4">
         <label className="inline-flex items-center gap-3 text-sm text-slate-300">
           <input
@@ -204,6 +260,7 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
           Destacado en home
         </label>
       </div>
+
       {message && (
         <div
           className={`rounded-3xl p-4 text-sm ${
@@ -215,16 +272,17 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
           {message}
         </div>
       )}
+
       <button
         type="submit"
         disabled={status === "loading"}
-        className="w-full rounded-full bg-accent px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-accentDark disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+        className="w-full rounded-full bg-accent px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-accentDark disabled:cursor-not-allowed disabled:opacity-50 active:scale-95"
       >
         {status === "loading"
           ? "Guardando..."
           : action === "create"
-          ? "Crear producto"
-          : "Guardar cambios"}
+            ? "Crear producto"
+            : "Guardar cambios"}
       </button>
     </form>
   );

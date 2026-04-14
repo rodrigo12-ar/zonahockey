@@ -1,4 +1,5 @@
 export type CategorySlug = "palos" | "patines" | "bolsos" | "accesorios" | "fotografias";
+export type SkateSubcategory = "plancha" | "botas" | "patin-completo" | "accesorios";
 
 export type Category = {
   id: string;
@@ -23,6 +24,7 @@ export type ProductBase = {
 
 export type Product = ProductBase & {
   category: Exclude<CategorySlug, "fotografias">;
+  subcategory?: SkateSubcategory;
   stock: number;
 };
 

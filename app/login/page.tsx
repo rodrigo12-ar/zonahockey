@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase-browser";
 
 export default function LoginPage() {
   const router = useRouter();
-  const redirectTo = "/admin";
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") ?? "/admin";
+  const unauthorizedReason = searchParams.get("reason") === "unauthorized";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,20 +21,21 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+    const supabase = createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password
     });
 
     setLoading(false);
 
-    if (response.ok) {
-      router.push(redirectTo);
-    } else {
-      const data = await response.json();
-      setError(data?.error ?? "No se pudo iniciar sesión.");
+    if (signInError) {
+      setError(signInError.message || "No se pudo iniciar sesion.");
+      return;
     }
+
+    router.push(redirectTo);
+    router.refresh();
   };
 
   return (
@@ -40,8 +44,10 @@ export default function LoginPage() {
         <div className="w-full rounded-[2rem] border border-white/10 bg-slate-950/80 p-8 shadow-soft sm:p-12">
           <div className="mb-8">
             <p className="text-sm uppercase tracking-[0.32em] text-accent/80">Acceso admin</p>
-            <h1 className="mt-3 text-3xl font-semibold text-white">Iniciar sesión</h1>
-            <p className="mt-2 text-slate-300">Ingresá con tu usuario y contraseña para acceder al panel de administración.</p>
+            <h1 className="mt-3 text-3xl font-semibold text-white">Iniciar sesion</h1>
+            <p className="mt-2 text-slate-300">
+              Ingresa con tu usuario de Supabase para acceder al panel de administracion.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -56,7 +62,7 @@ export default function LoginPage() {
               />
             </label>
             <label className="space-y-3 text-sm text-slate-300">
-              <span>Contraseña</span>
+              <span>Contrasena</span>
               <input
                 type="password"
                 value={password}
@@ -66,7 +72,11 @@ export default function LoginPage() {
               />
             </label>
 
-            {error ? <p className="rounded-3xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">{error}</p> : null}
+            {error || unauthorizedReason ? (
+              <p className="rounded-3xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+                {error || "Tu usuario existe en Supabase, pero no esta habilitado como admin."}
+              </p>
+            ) : null}
 
             <button
               type="submit"
@@ -78,7 +88,7 @@ export default function LoginPage() {
           </form>
 
           <p className="mt-8 text-sm text-slate-500">
-            Para probar el acceso admin local usa el usuario configurado en <span className="font-semibold">.env.local</span>.
+            Solo pueden entrar los emails configurados como admin en <span className="font-semibold">.env.local</span>.
           </p>
           <Link href="/" className="mt-4 inline-block text-sm text-accent hover:text-accentDark">
             Volver al inicio

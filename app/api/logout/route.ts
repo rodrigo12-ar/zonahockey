@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase-server";
 
 export async function GET(request: Request) {
+  const supabase = createClient();
+  await supabase.auth.signOut();
+
   const url = new URL("/login", request.url);
-  const response = NextResponse.redirect(url);
-  response.cookies.set({
-    name: "zona_admin_session",
-    value: "",
-    path: "/",
-    maxAge: 0,
-    expires: new Date(0)
-  });
-  return response;
+  return NextResponse.redirect(url);
 }

@@ -53,10 +53,15 @@ export function getOrderById(id: string) {
 }
 
 export function createProduct(data: Partial<Product>) {
+  const category = (data.category ?? "accesorios") as Product["category"];
+  const subcategory =
+    category === "patines" ? data.subcategory ?? "patin-completo" : undefined;
+
   const newProduct: Product = {
     id: `prod-${Date.now()}`,
     slug: data.slug ? data.slug : slugify(String(data.name ?? "producto")),
-    category: (data.category ?? "accesorios") as Product["category"],
+    category,
+    subcategory,
     price: data.price ?? 0,
     name: data.name ?? "Nuevo producto",
     shortDescription: data.shortDescription ?? "Descripción breve.",
@@ -78,6 +83,10 @@ export function updateProduct(slug: string, data: Partial<Product>) {
       ? {
           ...item,
           ...data,
+          subcategory:
+            (data.category ?? item.category) === "patines"
+              ? data.subcategory ?? item.subcategory ?? "patin-completo"
+              : undefined,
           slug: data.slug ? data.slug : item.slug,
           promotionText: data.promotionText ?? item.promotionText,
           updatedAt: new Date().toISOString().slice(0, 10)

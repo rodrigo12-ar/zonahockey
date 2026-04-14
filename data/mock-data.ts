@@ -54,6 +54,7 @@ export const products: Product[] = [
     name: "Patines Storm Pro",
     slug: "patines-storm-pro",
     category: "patines",
+    subcategory: "patin-completo",
     price: 44500,
     shortDescription: "Patines de velocidad con soporte alto.",
     longDescription: "Carcasa ergonómica y ruedas diseñadas para patinaje dinámico, con amortiguación y ajuste firme.",
