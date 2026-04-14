@@ -47,7 +47,7 @@ export default function CategoryPage({ params }: PageProps) {
         </div>
 
         {products.length > 0 ? (
-          <ProductGrid products={products.map((product) => ({ ...product, category: product.category }))} />
+          <ProductGrid products={products} />
         ) : (
           <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-10 text-slate-300">
             <p className="text-lg font-medium text-white">No hay productos en stock en esta categoría por el momento.</p>

@@ -58,7 +58,7 @@ export default function HomePage() {
               Productos y fotos con alto impacto visual, listos para comprar y para mostrar en tu equipo.
             </p>
           </div>
-          <ProductGrid products={featured.map((item) => ({ ...item, category: item.category }))} />
+          <ProductGrid products={featured} />
         </section>
 
         <section className="mt-16">
@@ -94,7 +94,7 @@ export default function HomePage() {
                     Volver arriba
                   </Link>
                 </div>
-                <ProductGrid products={items.map((item) => ({ ...item, category: item.category }))} />
+                <ProductGrid products={items} />
               </div>
             );
           })}

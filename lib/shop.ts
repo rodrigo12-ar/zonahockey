@@ -1,5 +1,5 @@
 import { categories, orders, photoProducts, products } from "@/data/mock-data";
-import type { Category, Order, OrderItem, PhotoProduct, Product } from "@/types";
+import type { Category, Order, PhotoProduct, Product } from "@/types";
 import { slugify } from "@/lib/utils";
 
 let productStore = products;
@@ -42,10 +42,6 @@ export function getRelatedProducts(slug: string) {
   const product = getProductBySlug(slug);
   if (!product) return [];
   return getAllProducts().filter((item) => item.slug !== slug).slice(0, 4);
-}
-
-export function getCartItems() {
-  return [];
 }
 
 export function getOrders() {
