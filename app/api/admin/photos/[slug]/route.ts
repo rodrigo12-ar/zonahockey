@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { deletePhoto, getProductBySlug, updatePhoto } from "@/lib/shop";
+import { deletePhoto, getPhotoBySlug, updatePhoto } from "@/lib/shop";
 
 type Params = {
   params: {
@@ -8,7 +8,7 @@ type Params = {
 };
 
 export async function GET(request: Request, { params }: Params) {
-  const product = getProductBySlug(params.slug);
+  const product = getPhotoBySlug(params.slug);
   if (!product) {
     return NextResponse.json({ error: "No encontrado" }, { status: 404 });
   }

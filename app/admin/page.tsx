@@ -2,8 +2,8 @@ import Link from "next/link";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { getAllProducts, getOrders, getPhotoProducts } from "@/lib/shop";
 
-export default function AdminDashboardPage() {
-  const products = getAllProducts().filter((item) => item.category !== "fotografias");
+export default async function AdminDashboardPage() {
+  const products = (await getAllProducts()).filter((item) => item.category !== "fotografias");
   const fotos = getPhotoProducts();
   const orders = getOrders();
 

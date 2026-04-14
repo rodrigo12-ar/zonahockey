@@ -11,12 +11,12 @@ type PageProps = {
   };
 };
 
-export default function ProductDetailPage({ params }: PageProps) {
-  const product = getProductBySlug(params.slug);
+export default async function ProductDetailPage({ params }: PageProps) {
+  const product = await getProductBySlug(params.slug);
   if (!product) {
     notFound();
   }
-  const related = getRelatedProducts(params.slug);
+  const related = await getRelatedProducts(params.slug);
 
   const isPhoto = product.category === "fotografias";
   const imageSrc = isPhoto ? (product as PhotoProduct).imagePreview ?? product.image : product.image;

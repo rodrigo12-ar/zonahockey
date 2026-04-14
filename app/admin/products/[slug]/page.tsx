@@ -9,8 +9,8 @@ type PageProps = {
   };
 };
 
-export default function AdminEditProductPage({ params }: PageProps) {
-  const product = getProductBySlug(params.slug);
+export default async function AdminEditProductPage({ params }: PageProps) {
+  const product = await getProductBySlug(params.slug);
   if (!product || product.category === "fotografias") {
     notFound();
   }

@@ -29,13 +29,13 @@ function getSkateSectionProducts(products: Product[], subcategory: SkateSubcateg
   return products.filter((product) => product.subcategory === subcategory);
 }
 
-export default function CategoryPage({ params }: PageProps) {
+export default async function CategoryPage({ params }: PageProps) {
   const category = getCategoryBySlug(params.slug);
   if (!category) {
     notFound();
   }
 
-  const products = getProductsByCategory(category.slug).filter(
+  const products = (await getProductsByCategory(category.slug)).filter(
     (item) => item.stock === undefined || item.stock > 0
   );
 

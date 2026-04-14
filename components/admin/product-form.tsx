@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Product, SkateSubcategory } from "@/types";
 
@@ -17,6 +18,7 @@ type ProductFormProps = {
 };
 
 export function ProductForm({ initialData = {}, action, endpoint }: ProductFormProps) {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: initialData.name ?? "",
     slug: initialData.slug ?? "",
@@ -71,6 +73,7 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
       });
 
       if (response.ok) {
+        const savedProduct = await response.json();
         setStatus("success");
         setMessage(`Producto ${action === "create" ? "creado" : "actualizado"} con exito.`);
         if (action === "create") {
@@ -88,9 +91,12 @@ export function ProductForm({ initialData = {}, action, endpoint }: ProductFormP
             featured: false
           });
         }
+        router.push(action === "create" ? "/admin/products" : `/admin/products/${savedProduct.slug}`);
+        router.refresh();
       } else {
+        const data = await response.json().catch(() => null);
         setStatus("error");
-        setMessage("Hubo un error al guardar el producto.");
+        setMessage(data?.error ?? "Hubo un error al guardar el producto.");
       }
     } catch (error) {
       setStatus("error");

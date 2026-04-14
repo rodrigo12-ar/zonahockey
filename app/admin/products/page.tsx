@@ -19,8 +19,8 @@ function formatProductCategory(product: Product) {
   return `patines / ${subcategoryLabels[product.subcategory]}`;
 }
 
-export default function AdminProductsPage() {
-  const products = getPhysicalProducts();
+export default async function AdminProductsPage() {
+  const products = await getPhysicalProducts();
 
   return (
     <div className="min-h-screen bg-background text-slate-100">

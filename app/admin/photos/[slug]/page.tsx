@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { PhotoForm } from "@/components/admin/photo-form";
-import { getProductBySlug } from "@/lib/shop";
+import { getPhotoBySlug } from "@/lib/shop";
 
 type PageProps = {
   params: {
@@ -10,7 +10,7 @@ type PageProps = {
 };
 
 export default function AdminEditPhotoPage({ params }: PageProps) {
-  const product = getProductBySlug(params.slug);
+  const product = getPhotoBySlug(params.slug);
   if (!product || product.category !== "fotografias") {
     notFound();
   }

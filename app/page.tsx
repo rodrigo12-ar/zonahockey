@@ -4,10 +4,10 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getAllProducts, getCategories, getFeaturedProducts } from "@/lib/shop";
 
-export default function HomePage() {
+export default async function HomePage() {
   const categories = getCategories();
-  const featured = getFeaturedProducts();
-  const products = getAllProducts();
+  const featured = await getFeaturedProducts();
+  const products = await getAllProducts();
 
   return (
     <div className="min-h-screen bg-background text-slate-100">
